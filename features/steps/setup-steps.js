@@ -1,6 +1,7 @@
-const {AfterAll, BeforeAll} = require('cucumber');
+const {After} = require('cucumber');
+const { BackendRequests } = require("../support/backend-requests");
+const req = new BackendRequests();
 
-AfterAll(function () {
-  // perform some shared teardown
-  return Promise.resolve()
-});
+After({tags: "@putingDataInDatabase"}, function () {
+    return Promise.resolve(req.deleteCreatedUsers());
+  });
