@@ -11,10 +11,12 @@
             "console": "integratedTerminal",
             "program": "${workspaceRoot}/node_modules/cucumber/bin/cucumber-js",
             "args": [
-                "${workspaceRoot}/features/*.feature",
+                "${workspaceRoot}/features/**.feature",
                 "-r",
                 "${workspaceRoot}/features/support/**.js",
-                ]
+                "-r",
+                "${workspaceRoot}/features/steps/**.js",
+            ]
         }
     ]
 }
