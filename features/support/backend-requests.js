@@ -21,7 +21,15 @@ exports.BackendRequests = class BackendRequests {
     BackendRequests.createdUsers.push(data);
   }
 
-
+  createType(type) {
+    switch (type) {
+      case 'number': return 1234;
+      case 'null': return null;
+      case 'invalid date': return '2014-14-14';
+      case 'empty string': return '';
+      default: return 'default';
+    }
+  }
   async deleteCreatedUsers() {
     let size = BackendRequests.createdUsers.length;
     for (let x = 0; x < size; x++) {
@@ -35,11 +43,11 @@ exports.BackendRequests = class BackendRequests {
     let data = {
       'dateOfBirth': '1992-06-14',
       'email': new Date().getTime() + '@waes.com',
-      'isAdmin': isAdmin !== undefined ? isAdmin : true,
+      'isAdmin': isAdmin !== undefined && isAdmin === 'true',
       'name': 'string',
       'password': 'string',
       'superpower': 'string',
-      'username': '' + new Date().getTime()
+      'username': 'a' + new Date().getTime()
     };
     removeParameter !== undefined && delete data[removeParameter];
     return data;
@@ -128,6 +136,25 @@ exports.BackendRequests = class BackendRequests {
     }
   }
 
+  async updateUser(userDetails, username, password) {
+    let updateUrl = `http://127.0.0.1:${this.port}/${this.basePath}/${this.usersPath}`;
+    try {
+      let httpResponse = await axios.put(updateUrl, {}, {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Accept': 'application/json',
+          Authorization: 'Basic ' + btoa(username + ':' + password)
+        },
+        data: userDetails
+      });
+      return httpResponse;
+
+    } catch (error) {
+      return error;
+    }
+
+  }
+
   async returnDatabaseToInitialStatus() {
     for (let user of initialDatabase) {
       let { name, email, superpower, dateOfBirth, isAdmin, password, username, id } = user;
@@ -136,7 +163,7 @@ exports.BackendRequests = class BackendRequests {
   }
 
   async prepareEnvironment() {
-    
+
     let preDefinedUsers = ['admin', 'dev', 'tester'];
     let usersInDatabase = await this.getAllUserDetails('admin', 'hero');
     usersInDatabase = Array.isArray(usersInDatabase.data) ? usersInDatabase.data : [usersInDatabase.data];

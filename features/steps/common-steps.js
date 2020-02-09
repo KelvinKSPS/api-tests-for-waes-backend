@@ -4,7 +4,6 @@ const { BackendRequests } = require('../support/backend-requests');
 const req = new BackendRequests();
 const Joi = require('joi');
 
-
 Then(/^the contract of the response should be as documented(.*)$/, function (tail) {
   const responseSchema = Joi.object({
     'dateOfBirth': Joi.string(),

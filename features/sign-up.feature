@@ -88,7 +88,7 @@ Feature: Sign Up
 
 
     @putingDataInDatabase
-    Scenario Outline: Information Missing
+    Scenario Outline: Sign up missing information
         Given I am a user wanting to sign up
         When I sign up missing the parameter <missing parameter>
         Then the status should be <status>

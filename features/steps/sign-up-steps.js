@@ -9,21 +9,26 @@ const Joi = require('joi');
 Given(/^I am a user wanting to sign up$/, function () {
 });
 
+Given(/^I am (.*) user signed up with parameter (.*) as (.*)$/, async function (role, parameter, value) {
+  let data = req.createSignUpSample(null, role);
+  data[parameter] = value;
+  this.signedUpUserData = await req.signUp(data.name, data.email, data.superpower, data.dateOfBirth, data.isAdmin, data.password, data.username);
+  this.signedUpUserData.data['password'] = data['password'];
+  this.username = data.username;
+  this.password = data.password;
+})
+
+
 Given(/^I am a user already signed up as (.*)$/, async function (username) {
   let data = req.createSignUpSample();
   data.username = username;
   this.signedUpUserData = await req.signUp(data.name, data.email, data.superpower, data.dateOfBirth, data.isAdmin, data.password, data.username);
 });
 
+
 When(/^I sign up using (.*) as a (.*)$/, async function (parameter, type) {
   let data = req.createSignUpSample();
-  switch (type) {
-    case 'number': data[parameter] = 1234; break;
-    case 'null': data[parameter] = null; break;
-    case 'invalid date': data[parameter] = '2014-14-14'; break;
-    case 'empty string': data[parameter] = ''; break;
-    default: data[parameter] = 'default';
-  }
+  data[parameter] = req.createType(type);
   this.result = await req.signUp(data.name, data.email, data.superpower, data.dateOfBirth, data.isAdmin, data.password, data.username);
 })
 
@@ -40,7 +45,6 @@ When(/^I sign up missing the parameter (.*)$/, async function (missingParameter)
   let data = req.createSignUpSample();
   delete data[missingParameter];
   this.result = await req.signUp(data.name, data.email, data.superpower, data.dateOfBirth, data.isAdmin, data.password, data.username);
-
 });
 
 When(/^I sign up using the following parameters: (.*) (.*) (.*) (.*) (.*) (.*) (.*)$/,

@@ -20,7 +20,7 @@ Given(/^I just signed up as a (.*)$/, async function (role) {
     let data = req.createSignUpSample(null, role === 'admin');
     this.username = data.username;
     this.password = data.password;
-    await req.signUp(data.name, data.email, data.superpower, data.dateOfBirth, data.isAdmin, data.password, data.username);
+    this.createdData = await req.signUp(data.name, data.email, data.superpower, data.dateOfBirth, data.isAdmin, data.password, data.username);
 })
 
 
