@@ -1,5 +1,6 @@
 const axios = require('axios');
 const btoa = require('btoa');
+const initialDatabase = require('./initial-database.json')
 
 exports.BackendRequests = class BackendRequests {
 
@@ -11,6 +12,8 @@ exports.BackendRequests = class BackendRequests {
     this.basePath = 'waesheroes/api/v1';
     this.userDetails = 'users/details';
     this.usersPath = 'users'
+    this.loginPath = 'access';
+    this.allUsers = 'all';
 
   }
 
@@ -27,32 +30,71 @@ exports.BackendRequests = class BackendRequests {
     BackendRequests.createdUsers = [];
   }
 
-  createSignUpSample() {
-    return {
+  createSignUpSample(removeParameter, isAdmin) {
+
+    let data = {
       'dateOfBirth': '1992-06-14',
       'email': new Date().getTime() + '@waes.com',
-      'isAdmin': true,
+      'isAdmin': isAdmin !== undefined ? isAdmin : true,
       'name': 'string',
       'password': 'string',
       'superpower': 'string',
       'username': '' + new Date().getTime()
-    }
+    };
+    removeParameter !== undefined && delete data[removeParameter];
+    return data;
   }
 
-  async signUp(name, email, superpower, dateOfBirth, isAdmin, password, username) {
+  async signUp(name, email, superpower, dateOfBirth, isAdmin, password, username, id) {
+
     let signUpBase = `${this.baseUrl}:${this.port}/${this.basePath}/${this.usersPath}`;
     let data = {};
-
+    id !== undefined && Object.assign(data, { id: id });
     name ? data['name'] = name : null;
+    username ? data['username'] = username : null;
     email ? data['email'] = email : null;
     superpower ? data['superpower'] = superpower : null;
     dateOfBirth ? data['dateOfBirth'] = dateOfBirth : null;
-    isAdmin ? data['isAdmin'] = isAdmin : null;
+
+    if (isAdmin !== undefined) {
+      data['isAdmin'] = isAdmin;
+    }
     password ? data['password'] = password : null;
-    username ? data['username'] = username : null;
 
     try {
       return await axios.post(signUpBase, data);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async login(username, password) {
+    let loginUrl = `${this.baseUrl}:${this.port}/${this.basePath}/${this.usersPath}/${this.loginPath}`;
+    try {
+      let httpResponse = await axios.get(loginUrl, {
+        headers: {
+          Authorization: 'Basic ' + btoa(username + ':' + password)
+        },
+        data: {}
+      });
+      return httpResponse;
+
+    } catch (error) {
+      return error;
+    }
+
+  }
+
+  async getAllUserDetails(username, password) {
+    let allUsersDetailsPath = `${this.baseUrl}:${this.port}/${this.basePath}/${this.usersPath}/${this.allUsers}`;
+    try {
+      let httpResponse = await axios.get(allUsersDetailsPath, {
+        headers: {
+          Authorization: 'Basic ' + btoa(username + ':' + password)
+        },
+        data: {}
+      });
+      return httpResponse;
     } catch (error) {
       return error;
     }
@@ -73,16 +115,41 @@ exports.BackendRequests = class BackendRequests {
     let password = !!customPassword ? customPassword : 'hero';
 
     try {
-      return await axios.delete(deleteUserPath, {
+      let httpResponse = await axios.delete(deleteUserPath, {
         headers: {
           Authorization: 'Basic ' + btoa(username + ':' + password)
         },
         data: userDetails
       });
+      return httpResponse;
 
     } catch (error) {
       return error;
     }
+  }
+
+  async returnDatabaseToInitialStatus() {
+    for (let user of initialDatabase) {
+      let { name, email, superpower, dateOfBirth, isAdmin, password, username, id } = user;
+      await this.signUp(name, email, superpower, dateOfBirth, isAdmin, password, username, id);
+    }
+  }
+
+  async prepareEnvironment() {
+    
+    let preDefinedUsers = ['admin', 'dev', 'tester'];
+    let usersInDatabase = await this.getAllUserDetails('admin', 'hero');
+    usersInDatabase = Array.isArray(usersInDatabase.data) ? usersInDatabase.data : [usersInDatabase.data];
+    for (let user of usersInDatabase) {
+      if (user === undefined) {
+        break;
+      }
+      if (!preDefinedUsers.includes(user["username"])) {
+        this.addUserToBeDeletedAfterTest(user);
+      }
+    }
+    await this.deleteCreatedUsers();
+
   }
 
 }

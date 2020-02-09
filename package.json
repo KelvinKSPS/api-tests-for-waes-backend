@@ -5,8 +5,8 @@
   "main": "",
   "scripts": {
     "test": "./node_modules/.bin/cucumber-js -f json:test/report/cucumber_report.json",
-    "report": "node index.js",
-    "test-and-report": "npm test && npm run report"
+    "report": "node report.js",
+    "test-and-report": "npm test || npm run report"
   },
   "author": "Kelvin Silva",
   "license": "ISC",

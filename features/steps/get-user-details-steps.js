@@ -1,27 +1,15 @@
 
 
-const { Given, When, Then, And } = require("cucumber");
-const { expect } = require("chai");
-const { BackendRequests } = require("../support/backend-requests");
+const { Given, When, Then } = require('cucumber');
+const { expect } = require('chai');
+const { BackendRequests } = require('../support/backend-requests');
 const req = new BackendRequests();
 
 Given(/^I want to see the details from a user$/, function () {
 });
 
-When(/^I access the data by using (.*)$/, async function (user) {
+When(/^I request details from user (.*)$/, async function (user) {
   this.result = await req.getUserDetails(user);
-});
-
-Then(/^the status should be (-?\d+)$/, function (status) {
-  // handling 200 OK and 404 cases
-  let statusCode = this.result.status;
-  if (statusCode === undefined) {
-    statusCode = this.result.response.status;
-    this.result.data = this.result;
-  } 
-
-  expect(statusCode).to.eql(status);
-
 });
 
 
