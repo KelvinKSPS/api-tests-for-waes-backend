@@ -4,6 +4,9 @@ const { BackendRequests } = require('../support/backend-requests');
 const req = new BackendRequests();
 const Joi = require('joi');
 
+/**
+ * Validating contract - checking if the format follows what is indicated in Swagger.
+ */
 Then(/^the contract of the response should be as documented(.*)$/, function (tail) {
   const responseSchema = Joi.object({
     'dateOfBirth': Joi.string(),

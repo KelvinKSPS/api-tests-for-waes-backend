@@ -46,7 +46,10 @@ When(/^I try to remove a user without passing parameter (.*)$/, async function (
 });
 
 
-
+/**
+ * 'Second time' has a special treatment because, in this case, the user does not exist.
+ * So, we use another account to try removing again.
+ */
 When(/^I make the request to delete my information (.*)$/, async function (tail) {
     if (tail === 'second time') {
         this.username = this.password = undefined;
@@ -60,6 +63,10 @@ When(/^I make the request to delete any information$/, async function () {
     this.result = await req.deleteUser(this.createdData, this.username, this.password);
 });
 
+/**
+ * Since there are two different patterns when the user is removed and
+ * when it is not found, this code is handling those two case
+ */
 Then(/^response should indicate the user (.*)$/, function (situation) {
     let prefix, message, response = '';
 

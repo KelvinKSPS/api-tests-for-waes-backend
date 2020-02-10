@@ -5,6 +5,10 @@ const { expect } = require('chai');
 const { BackendRequests } = require('../support/backend-requests');
 const req = new BackendRequests();
 
+
+/**
+ * Default users for admin and non-admin scenarios
+ */
 Given(/^I am a user with the role of (.*)$/, function (role) {
     if (role === 'admin') {
         this.username = 'admin';

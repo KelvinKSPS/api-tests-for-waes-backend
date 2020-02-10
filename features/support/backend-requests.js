@@ -17,6 +17,10 @@ exports.BackendRequests = class BackendRequests {
 
   }
 
+  /**
+   * healthCheck with the indication to change ip or port, 
+   * if this is the case.
+   */
   async healthCheck() {
     let healthPage = `${this.baseUrl}:${this.port}/swagger-ui.html`;
     try {
@@ -40,6 +44,21 @@ exports.BackendRequests = class BackendRequests {
     BackendRequests.createdUsers.push(data);
   }
 
+  createSignUpSample(removeParameter, isAdmin) {
+
+    let data = {
+      'dateOfBirth': '1992-06-14',
+      'email': new Date().getTime() + '@waes.com',
+      'isAdmin': isAdmin !== undefined && isAdmin === 'true',
+      'name': 'string',
+      'password': 'string',
+      'superpower': 'string',
+      'username': 'a' + new Date().getTime()
+    };
+    removeParameter !== undefined && delete data[removeParameter];
+    return data;
+  }
+
   createType(type) {
     switch (type) {
       case 'number': return 1234;
@@ -55,21 +74,6 @@ exports.BackendRequests = class BackendRequests {
       await this.deleteUser(BackendRequests.createdUsers[x]);
     }
     BackendRequests.createdUsers = [];
-  }
-
-  createSignUpSample(removeParameter, isAdmin) {
-
-    let data = {
-      'dateOfBirth': '1992-06-14',
-      'email': new Date().getTime() + '@waes.com',
-      'isAdmin': isAdmin !== undefined && isAdmin === 'true',
-      'name': 'string',
-      'password': 'string',
-      'superpower': 'string',
-      'username': 'a' + new Date().getTime()
-    };
-    removeParameter !== undefined && delete data[removeParameter];
-    return data;
   }
 
   async signUp(name, email, superpower, dateOfBirth, isAdmin, password, username, id) {
@@ -156,7 +160,7 @@ exports.BackendRequests = class BackendRequests {
   }
 
   async updateUser(userDetails, username, password) {
-    let updateUrl = `http://127.0.0.1:${this.port}/${this.basePath}/${this.usersPath}`;
+    let updateUrl = `${this.baseUrl}:${this.port}/${this.basePath}/${this.usersPath}`;
     try {
       let httpResponse = await axios.put(updateUrl, {}, {
         headers: {
@@ -199,6 +203,3 @@ exports.BackendRequests = class BackendRequests {
   }
 
 }
-
-// invalid http method
-// 415 / without data 

@@ -1,7 +1,10 @@
 {
   "name": "api-tests-for-waes-backend",
   "version": "1.0.0",
-  "config" : { "port" : "8081", "ip": "localhost" },
+  "config": {
+    "port": "8081",
+    "ip": "localhost"
+  },
   "description": "This is the project to test the backend assignment",
   "main": "",
   "scripts": {

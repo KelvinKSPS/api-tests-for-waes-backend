@@ -97,7 +97,7 @@ Feature: Update User
             | username          | 400    |
 
 
- @putingDataInDatabase
+    @putingDataInDatabase
     Scenario Outline: User updates another user
         Given I am a user and my role is <role>
         When I try to update a user which is <role from other user>
