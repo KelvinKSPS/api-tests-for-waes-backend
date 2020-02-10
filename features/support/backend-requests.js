@@ -6,15 +6,34 @@ exports.BackendRequests = class BackendRequests {
 
   constructor() {
     // static to be controlled by cucumber hooks
-    BackendRequests.createdUsers = []
-    this.baseUrl = 'http://localhost';
-    this.port = '8081';
+    BackendRequests.createdUsers = [];
+    this.baseUrl = 'http://' + process.env.npm_package_config_ip;
+    this.port = process.env.npm_package_config_port;
     this.basePath = 'waesheroes/api/v1';
     this.userDetails = 'users/details';
-    this.usersPath = 'users'
+    this.usersPath = 'users';
     this.loginPath = 'access';
     this.allUsers = 'all';
 
+  }
+
+  async healthCheck() {
+    let healthPage = `${this.baseUrl}:${this.port}/swagger-ui.html`;
+    try {
+      let httpResponse = await axios.get(healthPage, { header: { 'Content-type': 'application/json' } });
+      console.log('System is running in the following address: ' + `${this.baseUrl}:${this.port}`);
+      process.exit(0);
+
+    } catch (error) {
+      console.log('\nSystem is not working in the address ' + `${this.baseUrl}:${this.port}`);
+      console.log('\n You can change the ip using the following command:');
+      console.log('npm config set api-tests-for-waes-backend:ip <IP>');
+
+      console.log('\n You can change the ip using the following command:');
+      console.log('npm config set api-tests-for-waes-backend:port <PORT>\n');
+
+      process.exit(1);
+    }
   }
 
   addUserToBeDeletedAfterTest(data) {
@@ -171,7 +190,7 @@ exports.BackendRequests = class BackendRequests {
       if (user === undefined) {
         break;
       }
-      if (!preDefinedUsers.includes(user["username"])) {
+      if (!preDefinedUsers.includes(user['username'])) {
         this.addUserToBeDeletedAfterTest(user);
       }
     }

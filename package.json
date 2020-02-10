@@ -1,12 +1,14 @@
 {
   "name": "api-tests-for-waes-backend",
   "version": "1.0.0",
+  "config" : { "port" : "8081", "ip": "localhost" },
   "description": "This is the project to test the backend assignment",
   "main": "",
   "scripts": {
-    "test": "./node_modules/.bin/cucumber-js -f json:test/report/cucumber_report.json",
+    "health": "node health_check.js",
     "report": "node report.js",
-    "test-and-report": "npm test || npm run report"
+    "test": "./node_modules/.bin/cucumber-js -f json:test/report/cucumber_report.json",
+    "test-and-report": "npm run test || npm run report"
   },
   "author": "Kelvin Silva",
   "license": "ISC",
